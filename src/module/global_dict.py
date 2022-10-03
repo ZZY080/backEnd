@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING, Optional
 
 import psutil
 
-from module.server_status import ServerStatus
 from module.constants import APP_NAME
+from module.server_status import ServerStatus
 from module.singleton_type import SingletonType
 from module.utility import (get_script_memory_usage, get_script_uptime,
                             get_system_description, get_system_memory_usage,

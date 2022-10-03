@@ -1,5 +1,7 @@
 from threading import Thread
+
 import uvicorn as uvicorn
+
 from module.constants import APP_NAME, AUTHOR_NAME
 from module.exception_ex import PortInUseError
 from module.global_dict import Global

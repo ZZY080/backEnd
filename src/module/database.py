@@ -1,8 +1,8 @@
 from typing import List, Optional, Type
 
 from peewee import Model
-from playhouse.mysql_ext import MySQLConnectorDatabase
 from playhouse.kv import KeyValue
+from playhouse.mysql_ext import MySQLConnectorDatabase
 
 from module.global_dict import Global
 from module.logger_ex import LoggerEx, LogLevel

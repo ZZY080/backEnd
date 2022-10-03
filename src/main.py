@@ -5,8 +5,8 @@ from typing import Any, Type
 
 from rich.traceback import install as install_rich_traceback
 
-from module.constants import APP_DESCRIPTION, APP_NAME
 from module.command_handler import CommandHandler
+from module.constants import APP_DESCRIPTION, APP_NAME
 from module.global_dict import Global
 from module.logger_ex import LoggerEx, LogLevel
 from module.user_config import UserConfig

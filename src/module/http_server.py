@@ -7,10 +7,9 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from module.http_result import HttpResult
-
 from module.constants import APP_NAME
 from module.global_dict import Global
+from module.http_result import HttpResult
 from module.logger_ex import LoggerEx, LogLevel
 from module.singleton_type import SingletonType
 
