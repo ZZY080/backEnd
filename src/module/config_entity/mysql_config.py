@@ -7,11 +7,17 @@ class MysqlConfig:
 
         self.host = '127.0.0.1'
         self.port = 3306
+        self.username = 'root'
+        self.password = 'root'
+        self.database = 'creative_pay'
 
     def to_dict(self) -> dict:
         return {
             'host': self.host,
             'port': self.port,
+            'username': self.username,
+            'password': self.password,
+            'database': self.database,
         }
 
     def __setattr__(self, key, value) -> None:
