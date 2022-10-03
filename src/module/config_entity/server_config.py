@@ -16,7 +16,8 @@ class ServerConfig:
 
     def __setattr__(self, key, value) -> None:
         super().__setattr__(key, value)
-        self.save()
+        if key != 'save':
+            self.save()
 
     def update(self, config: dict) -> None:
         for key, value in config.items():

@@ -4,6 +4,7 @@ import ctypes
 import hashlib
 import os
 import platform
+import socket
 from datetime import datetime
 from math import inf
 from threading import Thread
@@ -11,6 +12,26 @@ from typing import Any, Generator, Union
 
 import distro
 import psutil
+
+
+def is_port_in_use(_port: int, _host: str = '127.0.0.1') -> bool:
+    """检查端口是否被占用
+
+    :param _port: 端口号
+    :param _host: 主机名
+    :return: True/False
+    """
+    s = None
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(1)
+        s.connect((_host, _port))
+        return True
+    except socket.error:
+        return False
+    finally:
+        if s:
+            s.close()
 
 
 def base_64(file_data: bytes) -> str:
