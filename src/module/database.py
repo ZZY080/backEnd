@@ -1,15 +1,14 @@
 from typing import List, Optional, Type
 
-from peewee import Model
+from peewee import Model, MySQLDatabase
 from playhouse.kv import KeyValue
-from playhouse.mysql_ext import MySQLConnectorDatabase
 
 from module.global_dict import Global
 from module.logger_ex import LoggerEx, LogLevel
 from module.singleton_type import SingletonType
 
 
-class Database(MySQLConnectorDatabase, metaclass=SingletonType):
+class Database(MySQLDatabase, metaclass=SingletonType):
     def sequence_exists(self, seq):
         raise NotImplementedError
 
@@ -19,7 +18,7 @@ class Database(MySQLConnectorDatabase, metaclass=SingletonType):
             self.config.database,
             host=self.config.host,
             port=self.config.port,
-            user=self.config.user,
+            user=self.config.username,
             password=self.config.password,
         )
         self.log = LoggerEx(self.__class__.__name__)
@@ -34,13 +33,16 @@ class Database(MySQLConnectorDatabase, metaclass=SingletonType):
         try:
             if super().connect():
                 self.log.debug('connected')
-                return True
             else:
                 self.log.error('connection failed')
                 raise ConnectionError('connection failed')
-        finally:
+        except Exception as e:
+            self.log.exception(e)
+            raise e
+        else:
             self.create_tables(self.tables)
             self.KV = KeyValue(database=self, table_name='kv')
+            return True
 
     def close(self) -> bool:
         if isinstance(self.KV, KeyValue):

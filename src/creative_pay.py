@@ -3,6 +3,7 @@ from threading import Thread
 import uvicorn as uvicorn
 
 from module.constants import APP_NAME, AUTHOR_NAME
+from module.database import Database
 from module.exception_ex import PortInUseError
 from module.global_dict import Global
 from module.http_server import HttpServer
@@ -19,6 +20,7 @@ class CreativePay(metaclass=SingletonType):
 
         self.config = Global().user_config.server_config
         # 一定要严格按照顺序初始化，否则可能会出现异常
+        self.database = Database()
         self.http_app = HttpServer()
         self.http_thread = None
 
@@ -29,6 +31,7 @@ class CreativePay(metaclass=SingletonType):
         """启动CreativePay"""
         if is_port_in_use(self.config.port):  # 检查端口是否被占用
             raise PortInUseError(f'Port {self.config.port} already in use')
+        self.database.connect()  # 连接数据库
         self.http_thread = Thread(
             target=uvicorn.run,
             daemon=True,
@@ -39,7 +42,7 @@ class CreativePay(metaclass=SingletonType):
                 'log_level': 'warning' if Global().debug_mode else 'critical',
             }
         )
-        self.http_thread.start()
+        self.http_thread.start()  # 启动HTTP服务
 
     def stop(self):
         """停止CreativePay"""
