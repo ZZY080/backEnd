@@ -59,6 +59,8 @@ python ./main.py --debug
 
 - [ ] Auto Deploy 自动部署
 - [x] Code Lint 代码检查
+- [ ] User Register 用户注册
+- [ ] User Login 用户登录
 
 ## Development 开发相关
 
