@@ -1,10 +1,11 @@
+import os
+
 from module.config_entity.mysql_config import MysqlConfig
 from module.config_entity.server_config import ServerConfig
 from module.global_dict import Global
 from module.logger_ex import LoggerEx, LogLevel
 from module.singleton_type import SingletonType
 from module.yaml_config import YamlConfig
-import os
 
 
 class UserConfig(metaclass=SingletonType):
@@ -19,8 +20,9 @@ class UserConfig(metaclass=SingletonType):
         if Global().debug_mode:
             self.log.set_level(LogLevel.DEBUG)
         self.load()
-        self.server_config.save = self.save
-        self.mysql_config.save = self.save
+        # not allow to save
+        # self.server_config.save = self.save
+        # self.mysql_config.save = self.save
 
     def load(self) -> None:
         self.log.debug(f'Loading config file: {self.file_path}')
@@ -58,8 +60,9 @@ class UserConfig(metaclass=SingletonType):
             self.save()
 
     def save(self) -> None:
-        self.log.debug(f'Saving config file: {self.file_path}')
-        self.config_data['server'] = self.server_config.to_dict()
-        self.config_data['mysql'] = self.mysql_config.to_dict()
-        self.config_data.save()  # TODO: 写出时保留注释
-        self.log.debug(f'Config saved: {dict(self.config_data)}')
+        self.log.warning('Not allow to save')
+        # self.log.debug(f'Saving config file: {self.file_path}')
+        # self.config_data['server'] = self.server_config.to_dict()
+        # self.config_data['mysql'] = self.mysql_config.to_dict()
+        # self.config_data.save()  # TODO: 写出时保留注释
+        # self.log.debug(f'Config saved: {dict(self.config_data)}')

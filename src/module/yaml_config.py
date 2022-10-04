@@ -8,7 +8,7 @@ from module.atomicwrites import atomic_write
 class YamlConfig(UserDict):
     """yaml 文件读写操作"""
 
-    def __init__(self, path, auto_load=True, auto_save=True, auto_create=True):
+    def __init__(self, path, auto_load=True, auto_save=False, auto_create=True):
         """yaml文件操作类
 
         :param path: yaml文件路径
