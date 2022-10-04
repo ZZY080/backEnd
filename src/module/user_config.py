@@ -4,6 +4,7 @@ from module.global_dict import Global
 from module.logger_ex import LoggerEx, LogLevel
 from module.singleton_type import SingletonType
 from module.yaml_config import YamlConfig
+import os
 
 
 class UserConfig(metaclass=SingletonType):
@@ -26,16 +27,27 @@ class UserConfig(metaclass=SingletonType):
         self.config_data = YamlConfig(self.file_path)
         need_save = len(self.config_data) == 0
 
-        # 读取配置
-        t = dict(self.config_data.get('server'))
-        self.server_config.update(t)
-        if len(t) < len(self.server_config):
-            need_save = True
+        # 读取环境变量
+        env = os.environ
+        env_dict = {}
+        for key in env:
+            if key.startswith('CP_') and len(key) > 3:
+                env_dict[key[3:].lower()] = env[key]
+        self.log.debug(f'Environment variables: {env_dict}')
 
-        t = dict(self.config_data.get('mysql'))
-        self.mysql_config.update(t)
-        if len(t) < len(self.mysql_config):
-            need_save = True
+        # 读取配置
+        gg = [
+            (self.server_config, 'server'),
+            (self.mysql_config, 'mysql'),
+        ]
+        for g in gg:
+            t = dict(self.config_data.get(g[1]))
+            for key in env_dict:
+                if key.startswith(g[1] + '_'):
+                    t[key[len(g[1]) + 1:]] = env_dict[key]
+            g[0].update(t)
+            if len(t) < len(g[0]):
+                need_save = True
 
         # 若配置项不存在，则创建配置项
         self.config_data['server'] = self.server_config.to_dict()
