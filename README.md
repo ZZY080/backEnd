@@ -11,6 +11,50 @@ CreativePay 后端服务
 
 ## Quick Start 快速开始
 
+Make sure you have installed **Python 3.10.7**.
+
+请确保你的机器有 **Python 3.10.7** 的环境，其他版本未经测试。
+
+### Install Dependencies 安装依赖
+
+#### Windows 10 PowerShell
+
+```ps
+git clone https://github.com/AkagiYui/CreativePayBackend
+cd ./CreativePayBackend
+python -m venv venv
+./venv/Scripts/activate
+python -m pip install -r ./requirements.txt
+cd ./src
+```
+
+#### Linux Debian 11
+
+Recommended to use Docker to deploy the service. 推荐使用 Docker 部署服务。
+
+```shell
+git clone https://github.com/AkagiYui/CreativePayBackend
+cd ./CreativePayBackend
+python3 -m venv venv
+source ./venv/bin/activate
+python -m pip install -r ./requirements.txt
+cd ./src
+```
+
+### Edit Configuration 修改配置文件
+
+```ps
+cp config.yaml.bak config.yaml
+```
+
+你也可以使用环境变量
+
+### Start Server 启动服务
+
+```ps
+python ./main.py --debug
+```
+
 ## TODO 待办
 
 - [ ] Auto Deploy 自动部署
@@ -18,16 +62,16 @@ CreativePay 后端服务
 
 ## Development 开发相关
 
-- 操作系统：[Windows 10 19044.1586](https://www.microsoft.com/zh-cn/windows)
-- 系统架构：amd64
+- OS 操作系统：[Windows 10 19044.1586](https://www.microsoft.com/zh-cn/windows)
+- Arch 系统架构：amd64
 
 ### Technology Stack 使用技术
 
-- Python: [3.10.7](https://www.python.org/) [下载地址](https://www.python.org/downloads/release/python-3107/)
-- 依赖表生成工具: [pip-tools 6.8.0](https://github.com/jazzband/pip-tools/)
-- 导入排序工具: [isort 5.10.1](https://pycqa.github.io/isort/)
-- 代码格式化工具: [flake8 5.0.4](https://flake8.readthedocs.io/en/latest/) [mypy 0.982](https://mypy.readthedocs.io/en/latest/)
-- 数据库: [MySQL](https://www.mysql.com/)
+- Python: [3.10.7](https://www.python.org/) [Download 下载地址](https://www.python.org/downloads/release/python-3107/)
+- requirements.txt Creator 依赖表生成工具: [pip-tools 6.8.0](https://github.com/jazzband/pip-tools/)
+- Import Sort 导入排序工具: [isort 5.10.1](https://pycqa.github.io/isort/)
+- Code Lint 代码格式化工具: [flake8 5.0.4](https://flake8.readthedocs.io/en/latest/) [mypy 0.982](https://mypy.readthedocs.io/en/latest/)
+- Database 数据库: [MySQL](https://www.mysql.com/)
 
 ### Runtime Python Package 运行时Python包  
 
