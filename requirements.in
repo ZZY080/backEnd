@@ -5,3 +5,4 @@ ruamel.yaml==0.17.21
 peewee==3.15.3
 fastapi==0.85.0
 uvicorn==0.18.3
+PyMySQL==1.0.2

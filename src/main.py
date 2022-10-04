@@ -102,5 +102,5 @@ if __name__ == '__main__':
     if isinstance(app, type_of_app):
         app.stop()  # noqa
 
-    log.debug(f'{APP_NAME} exits.')
+    log.debug(f'{APP_NAME} exited.')
     sys.exit(Global().exit_code)

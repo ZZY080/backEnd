@@ -38,7 +38,7 @@ CreativePay 后端服务
 - [peewee 3.15.1](https://github.com/coleifer/peewee/) ORM工具
 - [fastapi 0.85.0](https://fastapi.tiangolo.com/zh/) HTTP/Websocket服务器
 - [uvicorn 0.18.2](https://www.uvicorn.org/) ASGI web 服务器
-- [requests 2.28.1](https://requests.readthedocs.io/en/latest/) HTTP客户端
+- [PyMySQL 1.0.2](https://pymysql.readthedocs.io/) MySQL客户端
 
 ### Code Lint 代码检查
 
