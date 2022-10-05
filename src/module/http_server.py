@@ -8,6 +8,7 @@ from starlette.exceptions import HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from module.constants import APP_NAME
+from module.controller.user_controller import UserController
 from module.global_dict import Global
 from module.http_result import HttpResult
 from module.logger_ex import LoggerEx, LogLevel
@@ -31,6 +32,7 @@ class HttpServer(FastAPI, metaclass=SingletonType):
         self.add_exception_handler(RequestValidationError, handler=self.exception_handler_ex)
 
         self.router.add_api_route('/', self.route_root, methods=['GET', 'POST'])
+        self.router.include_router(UserController())
 
     @staticmethod
     async def exception_handler_ex(_: Request, exc: Union[HTTPException, RequestValidationError]) -> JSONResponse:

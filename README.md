@@ -85,6 +85,8 @@ python ./main.py --debug
 - [fastapi 0.85.0](https://fastapi.tiangolo.com/zh/) HTTP/Websocket服务器
 - [uvicorn 0.18.2](https://www.uvicorn.org/) ASGI web 服务器
 - [PyMySQL 1.0.2](https://pymysql.readthedocs.io/) MySQL客户端
+- [python-jose 3.3.0](https://python-jose.readthedocs.io/en/latest/) JWT工具
+- [cryptography 38.0.1](https://cryptography.io/en/latest/) 加密工具
 
 ### Code Lint 代码检查
 

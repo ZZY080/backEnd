@@ -21,6 +21,7 @@ class CreativePay(metaclass=SingletonType):
         self.config = Global().user_config.server_config
         # 一定要严格按照顺序初始化，否则可能会出现异常
         self.database = Database()
+        Global().database = self.database
         self.http_app = HttpServer()
         self.http_thread = None
 

@@ -2,6 +2,7 @@ import base64
 import contextlib
 import ctypes
 import hashlib
+import hmac
 import os
 import platform
 import socket
@@ -147,6 +148,11 @@ def deep_iter(data: Any, depth=inf, current_depth=1) -> Generator:
                 yield [key] + child_path, child_value
     else:
         yield [], data
+
+
+def hmac_sha1(key: str, data: str) -> str:
+    """计算HMAC-SHA1"""
+    return hmac.new(key.encode(), data.encode(), hashlib.sha1).hexdigest()
 
 
 if __name__ == '__main__':
