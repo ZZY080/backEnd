@@ -2,6 +2,7 @@ version: "3.9"
 services:
   api:
     build: .
+    tty: true
     ports:
       - "13094:13094"
     environment:
