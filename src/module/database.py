@@ -3,7 +3,7 @@ from typing import List, Optional, Type
 from peewee import Model, MySQLDatabase
 from playhouse.kv import KeyValue
 
-from module.DatabaseTable.user_model import UserModel
+from module.database_table.user_model import UserModel
 from module.global_dict import Global
 from module.logger_ex import LoggerEx, LogLevel
 from module.singleton_type import SingletonType

@@ -1,12 +1,13 @@
 from fastapi import APIRouter
 
-from module.DatabaseTable.user_model import UserModel
+from module.database_table.user_model import UserModel
 from module.Model.check_username_valid_model import CheckUsernameValidModel
 from module.Model.login_request_model import LoginRequestModel
 from module.Model.register_request_model import RegisterRequestModel
 from module.database import Database
 from module.global_dict import Global
 from module.http_result import HttpResult
+from module.jwt_manager import JWTManager
 from module.logger_ex import LoggerEx, LogLevel
 from module.utility import checksum, hmac_sha1
 
@@ -21,7 +22,7 @@ class UserController(APIRouter):
             self.log.set_level(LogLevel.DEBUG)
         self.log.debug(f'{self.__class__.__name__} Initializing...')
 
-        self.db: Database = Global().database
+        self.jwt = JWTManager()
 
         self.add_api_route('/login', self.login, methods=['POST'])
         self.add_api_route('/register', self.register, methods=['POST'])
@@ -29,7 +30,9 @@ class UserController(APIRouter):
 
     async def login(self, lrm: LoginRequestModel) -> dict:
         """登录"""
-        return HttpResult.success(lrm)
+        if UserModel.is_password_correct(lrm.username, hmac_sha1(lrm.username, lrm.password)):
+            return HttpResult.success(self.jwt.create_jwt(lrm.username))
+        return HttpResult.no_auth('用户名或密码错误')
 
     async def register(self, rrm: RegisterRequestModel) -> dict:
         """注册"""

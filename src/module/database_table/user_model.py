@@ -3,7 +3,7 @@ from typing import Union
 
 from peewee import CharField, DateTimeField
 
-from module.DatabaseTable.base_table import BaseTable
+from module.database_table.base_table import BaseTable
 
 
 class UserModel(BaseTable):
@@ -27,3 +27,8 @@ class UserModel(BaseTable):
     def is_username_exist(cls, username: str) -> bool:
         """判断用户名是否存在"""
         return cls.select().where(cls.username == username).count() > 0
+
+    @classmethod
+    def is_password_correct(cls, username: str, password: str) -> bool:
+        """判断密码是否正确"""
+        return cls.get_or_none(cls.username == username, cls.password == password) is not None

@@ -1,6 +1,7 @@
 import argparse
 import signal
 import sys
+from types import NoneType
 from typing import Any, Type
 
 from rich.traceback import install as install_rich_traceback
@@ -99,7 +100,7 @@ if __name__ == '__main__':
             if command:
                 command_handler.add(command)
 
-    if isinstance(app, type_of_app):
+    if (not isinstance(app, NoneType)) and isinstance(app, type_of_app):
         app.stop()  # noqa
 
     log.debug(f'{APP_NAME} exited.')
