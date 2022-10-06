@@ -23,7 +23,14 @@ class HttpServer(FastAPI, metaclass=SingletonType):
 
     def __init__(self):
         """初始化"""
-        super().__init__(docs_url='/docs', redoc_url=None, title=APP_NAME)  # 关闭 redoc
+        super().__init__(
+            docs_url='/docs',  # 文档地址
+            redoc_url=None,  # 关闭redoc文档
+            title=APP_NAME,  # 文档标题
+            openapi_tags=[
+                {"name": "User", "description": "用户接口"},
+            ]
+        )
         self.log = LoggerEx(self.__class__.__name__)
         if Global().debug_mode:
             self.log.set_level(LogLevel.DEBUG)
@@ -35,8 +42,8 @@ class HttpServer(FastAPI, metaclass=SingletonType):
         self.add_exception_handler(HTTPException, handler=self.exception_handler_ex)
         self.add_exception_handler(RequestValidationError, handler=self.exception_handler_ex)
 
-        self.router.add_api_route('/', self.route_root, methods=['GET'])
-        self.router.add_api_route('/', self.route_root, methods=['POST'])
+        self.router.add_api_route('/', self.route_root, methods=['GET'], include_in_schema=False)
+        self.router.add_api_route('/', self.route_root, methods=['POST'], include_in_schema=False)
         self.router.include_router(UserController())
 
         self.no_token_path = {

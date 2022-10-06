@@ -22,10 +22,10 @@ class UserController(APIRouter):
             self.log.set_level(LogLevel.DEBUG)
         self.log.debug(f'{self.__class__.__name__} Initializing...')
 
-        self.add_api_route('/login', self.login, methods=['POST'])
-        self.add_api_route('/register', self.register, methods=['POST'])
-        self.add_api_route('/username-valid', self.is_username_valid, methods=['GET'])
-        self.add_api_route('/info', self.get_user_info, methods=['GET'])
+        self.add_api_route('/login', self.login, methods=['POST'], tags=['User'], name='登录')
+        self.add_api_route('/register', self.register, methods=['POST'], tags=['User'], name='注册')
+        self.add_api_route('/username-valid', self.is_username_valid, methods=['GET'], tags=['User'], name='检查用户名是否未注册并可用')
+        self.add_api_route('/info', self.get_user_info, methods=['GET'], tags=['User'], name='获取用户信息')
 
     async def login(self, lrm: LoginRequestModel) -> dict:
         """登录"""
