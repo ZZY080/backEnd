@@ -13,3 +13,8 @@ class JWTManager:
             'username': username,
             'exp': datetime.utcnow() + timedelta(hours=2)
         }, JWT_SECRET, algorithm='HS256')
+
+    @classmethod
+    def decode_jwt(cls, token: str) -> dict:
+        """解码JWT"""
+        return jwt.decode(token, JWT_SECRET, algorithms=['HS256'])

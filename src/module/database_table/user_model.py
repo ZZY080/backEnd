@@ -32,3 +32,19 @@ class UserModel(BaseTable):
     def is_password_correct(cls, username: str, password: str) -> bool:
         """判断密码是否正确"""
         return cls.get_or_none(cls.username == username, cls.password == password) is not None
+
+    @classmethod
+    def get_user_information(cls, username: str) -> dict:
+        """获取用户信息"""
+        user = cls.get_or_none(cls.username == username)
+        if user is None:
+            return {}
+        return {
+            'username': user.username,
+            'nickname': user.nickname,
+        }
+
+    @classmethod
+    def get_user_by_name(cls, username: str) -> 'UserModel':
+        """通过用户名获取用户"""
+        return cls.get_or_none(cls.username == username)
