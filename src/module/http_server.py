@@ -4,6 +4,7 @@ from typing import Union
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from jose import JWTError, ExpiredSignatureError
 from jose.exceptions import JWTClaimsError
 from starlette.exceptions import HTTPException
@@ -39,6 +40,17 @@ class HttpServer(FastAPI, metaclass=SingletonType):
         self.add_event_handler('startup', func=self.server_startup)
         self.add_event_handler('shutdown', func=self.server_shutdown)
         self.add_middleware(BaseHTTPMiddleware, dispatch=self.http_middleware)
+        self.add_middleware(
+            CORSMiddleware,  # 跨域中间件
+            allow_origins=[
+                '*',
+                'http://localhost',
+                'http://localhost:3000',
+            ],  # 允许跨域的来源
+            allow_credentials=True,  # 允许跨域的cookie
+            allow_methods=['*'],  # 允许跨域的方法
+            allow_headers=['*'],  # 允许跨域的头
+        )
         self.add_exception_handler(HTTPException, handler=self.exception_handler_ex)
         self.add_exception_handler(RequestValidationError, handler=self.exception_handler_ex)
 
