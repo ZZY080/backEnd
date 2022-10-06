@@ -1,5 +1,6 @@
 FROM python:3.10-slim
-COPY ./ /app
+COPY ./src /app
+COPY ./requirements.txt /requirements.txt
 
 # 设置时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
@@ -9,9 +10,9 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 # 安装依赖
 && pip --no-cache-dir install --upgrade pip \
 && pip --no-cache-dir install wheel \
-&& cd /app \
 && pip --no-cache-dir install -r ./requirements.txt \
 # 清理缓存
+&& rm -r ./requirements.txt \
 && rm -rf ~/.cache/pip
 
 EXPOSE 13094
@@ -23,5 +24,5 @@ ARG CP_MYSQL_USERNAME
 ARG CP_MYSQL_PASSWORD
 ARG CP_MYSQL_DATABASE
 
-WORKDIR /app/src
+WORKDIR /app
 CMD ["python", "./main.py", "--debug"]

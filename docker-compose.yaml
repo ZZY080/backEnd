@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  backend:
+    build: .
+    ports:
+      - "13094:13094"
+    environment:
+      CP_MYSQL_HOST: "${CP_MYSQL_HOST}"

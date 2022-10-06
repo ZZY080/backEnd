@@ -11,13 +11,23 @@ CreativePay 后端服务
 
 ## Quick Start 快速开始
 
+### Docker 使用 Docker 部署
+
+```shell
+git clone https://github.com/AkagiYui/CreativePayBackend
+cd ./CreativePayBackend
+docker-compose up -d --build
+```
+
+### Manual Deploy 手动部署
+
 Make sure you have installed **Python 3.10.7**.
 
 请确保你的机器有 **Python 3.10.7** 的环境，其他版本未经测试。
 
-### Install Dependencies 安装依赖
+#### Install Dependencies 安装依赖
 
-#### Windows 10 PowerShell
+##### Windows 10 PowerShell
 
 ```ps
 git clone https://github.com/AkagiYui/CreativePayBackend
@@ -28,9 +38,7 @@ python -m pip install -r ./requirements.txt
 cd ./src
 ```
 
-#### Linux Debian 11
-
-Recommended to use Docker to deploy the service. 推荐使用 Docker 部署服务。
+##### Linux Debian 11
 
 ```shell
 git clone https://github.com/AkagiYui/CreativePayBackend
@@ -41,7 +49,7 @@ python -m pip install -r ./requirements.txt
 cd ./src
 ```
 
-### Edit Configuration 修改配置文件
+#### Edit Configuration 修改配置文件
 
 ```ps
 cp config.yaml.bak config.yaml
@@ -49,7 +57,7 @@ cp config.yaml.bak config.yaml
 
 你也可以使用环境变量
 
-### Start Server 启动服务
+#### Start Server 启动服务
 
 ```ps
 python ./main.py --debug
@@ -59,8 +67,9 @@ python ./main.py --debug
 
 - [ ] Auto Deploy 自动部署
 - [x] Code Lint 代码检查
-- [ ] User Register 用户注册
-- [ ] User Login 用户登录
+- [x] CORS Support 跨域支持
+- [x] User Register 用户注册
+- [x] User Login 用户登录
 
 ## Development 开发相关
 
