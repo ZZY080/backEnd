@@ -16,7 +16,7 @@ CreativePay 后端服务
 ```shell
 git clone https://github.com/AkagiYui/CreativePayBackend
 cd ./CreativePayBackend
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 ### Manual Deploy 手动部署
