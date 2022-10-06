@@ -1,15 +1,14 @@
 from fastapi import APIRouter, Request
 
 from module.database_table.user_model import UserModel
-from module.Model.check_username_valid_model import CheckUsernameValidModel
-from module.Model.login_request_model import LoginRequestModel
-from module.Model.register_request_model import RegisterRequestModel
-from module.database import Database
 from module.global_dict import Global
 from module.http_result import HttpResult
 from module.jwt_manager import JWTManager
 from module.logger_ex import LoggerEx, LogLevel
-from module.utility import checksum, hmac_sha1
+from module.model.check_username_valid_model import CheckUsernameValidModel
+from module.model.login_request_model import LoginRequestModel
+from module.model.register_request_model import RegisterRequestModel
+from module.utility import hmac_sha1
 
 
 class UserController(APIRouter):

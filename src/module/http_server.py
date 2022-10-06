@@ -3,9 +3,9 @@ from typing import Union
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from jose import JWTError, ExpiredSignatureError
+from fastapi.responses import JSONResponse
+from jose import ExpiredSignatureError, JWTError
 from jose.exceptions import JWTClaimsError
 from starlette.exceptions import HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
