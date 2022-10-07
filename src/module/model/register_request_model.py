@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class RegisterRequestModel(BaseModel):
-    username: str
-    password: str
-    nickname: str
+    username: str = Field(..., example='admin')
+    password: str = Field(..., example='mypwd')
+    nickname: str = Field(..., example='这是昵称')

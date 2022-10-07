@@ -65,8 +65,9 @@ class HttpServer(FastAPI, metaclass=SingletonType):
             self.docs_url, self.openapi_url, '/docs/oauth2-redirect',  # 文档
             '/',  # 根路径
             '/user/login',  # 登录
-            '/user/username-valid',  # 用户名验证
+            '/user/username-available',  # 用户名验证
             '/user/register',  # 注册
+            '/account/balance',  # 查询余额
         }  # 不需要token的路径
 
     @staticmethod
