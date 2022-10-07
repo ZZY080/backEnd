@@ -65,7 +65,7 @@ python ./main.py --debug
 
 ## TODO 待办
 
-- [ ] Auto Deploy 自动部署
+- [x] Auto Deploy 自动部署
 - [x] Code Lint 代码检查
 - [x] CORS Support 跨域支持
 - [x] User Register 用户注册

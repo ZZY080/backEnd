@@ -76,7 +76,7 @@ class HttpServer(FastAPI, metaclass=SingletonType):
             else:
                 content = HttpResult.error(exc.detail)
             return JSONResponse(content=content, status_code=exc.status_code, headers=headers)
-        return JSONResponse(content=HttpResult.bad_request(), status_code=400, headers=headers)
+        return HttpResult.bad_request()
 
     async def server_startup(self) -> None:
         """事件 服务启动"""
@@ -88,7 +88,8 @@ class HttpServer(FastAPI, metaclass=SingletonType):
 
     async def http_middleware(self, request: Request, call_next) -> JSONResponse:
         """请求中间件"""
-        self.log.debug(f'{request.method:.4s} {request.url.path} {request.query_params}')
+        client = f'{request.client.host}:{request.client.port}'
+        self.log.debug(f'{client} -> {request.method:.4s} {request.url.path} {request.query_params}')
         start_time = time.time()
         if request.url.path in self.no_token_path:
             response = await call_next(request)
@@ -96,25 +97,25 @@ class HttpServer(FastAPI, metaclass=SingletonType):
             headers = request.headers
             token = headers.get('Authorization')
             if token is None:
-                response = JSONResponse(content=HttpResult.no_auth('token为空'), status_code=401)
+                response = HttpResult.no_auth('token为空')
             else:
                 token = token.replace('Bearer ', '')
                 try:
                     token = JWTManager.decode_jwt(token)
                 except (JWTError, ExpiredSignatureError, JWTClaimsError):
-                    return JSONResponse(content=HttpResult.no_auth('token无效'), status_code=401)
+                    return HttpResult.no_auth('token无效')
                 username = token.get('username')
                 if UserModel.is_username_exist(username):
                     request.state.user = UserModel.get_user_by_name(username)
                     response = await call_next(request)
                 else:
-                    response = JSONResponse(content=HttpResult.no_auth('token无效'), status_code=401)
+                    response = HttpResult.no_auth('token无效')
         process_time = time.time() - start_time
         response.headers['X-Process-Time'] = str(process_time)
-        self.log.debug(f'{response.status_code}  Process Time: {process_time:.3f}s')
+        self.log.debug(f'{client} <- {response.status_code} ProcessTime: {process_time:.3f}s')
         return response
 
     @staticmethod
-    async def route_root() -> dict:
+    async def route_root() -> JSONResponse:
         """根路由"""
         return HttpResult.success(f'This is {APP_NAME}!')

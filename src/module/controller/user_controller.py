@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+from starlette.responses import JSONResponse
 
 from module.database_table.user_model import UserModel
 from module.global_dict import Global
@@ -21,18 +22,23 @@ class UserController(APIRouter):
             self.log.set_level(LogLevel.DEBUG)
         self.log.debug(f'{self.__class__.__name__} Initializing...')
 
-        self.add_api_route('/login', self.login, methods=['POST'], tags=['User'], name='登录')
-        self.add_api_route('/register', self.register, methods=['POST'], tags=['User'], name='注册')
-        self.add_api_route('/username-valid', self.is_username_valid, methods=['GET'], tags=['User'], name='检查用户名是否未注册并可用')
-        self.add_api_route('/info', self.get_user_info, methods=['GET'], tags=['User'], name='获取用户信息')
+        self.add_api_route(response_model=HttpResult, path='/login', endpoint=self.login, methods=['POST'],
+                           tags=['User'], name='登录')
+        self.add_api_route(response_model=HttpResult, path='/register', endpoint=self.register, methods=['POST'],
+                           tags=['User'], name='注册')
+        self.add_api_route(response_model=HttpResult, path='/username-valid', endpoint=self.is_username_valid, methods=['GET'],
+                           tags=['User'], name='检查用户名是否未注册并可用')
+        self.add_api_route(response_model=HttpResult, path='/info', endpoint=self.get_user_info, methods=['GET'],
+                           tags=['User'], name='获取用户信息')
 
-    async def login(self, lrm: LoginRequestModel) -> dict:
-        """登录"""
+    async def login(self, lrm: LoginRequestModel) -> JSONResponse:
+        """登录，返回JWT"""
         if UserModel.is_password_correct(lrm.username, hmac_sha1(lrm.username, lrm.password)):
+            self.log.debug(f'login success: {lrm.username}')
             return HttpResult.success(JWTManager.create_jwt(lrm.username))
         return HttpResult.no_auth('用户名或密码错误')
 
-    async def register(self, rrm: RegisterRequestModel) -> dict:
+    async def register(self, rrm: RegisterRequestModel) -> JSONResponse:
         """注册"""
         if UserModel.is_username_exist(rrm.username):
             return HttpResult.bad_request('用户名已存在')
@@ -45,11 +51,11 @@ class UserController(APIRouter):
         self.log.debug(f'new register user: {new_user}')
         return HttpResult.success() if new_user.save() else HttpResult.error()
 
-    async def is_username_valid(self, cuv: CheckUsernameValidModel) -> dict:
+    async def is_username_valid(self, cuv: CheckUsernameValidModel) -> JSONResponse:
         """检查用户名是否合法"""
         return HttpResult.success(not UserModel.is_username_exist(cuv.username))
 
-    async def get_user_info(self, req: Request) -> dict:
+    async def get_user_info(self, req: Request) -> JSONResponse:
         """获取用户信息"""
         user: UserModel = req.state.user
         return HttpResult.success(UserModel.get_user_information(user.username))
