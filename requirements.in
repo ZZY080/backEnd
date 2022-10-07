@@ -8,3 +8,5 @@ uvicorn==0.18.3
 PyMySQL==1.0.2
 python-jose==3.3.0
 cryptography==38.0.1
+Pillow==9.2.0
+qrcode==7.3.1

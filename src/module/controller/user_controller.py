@@ -1,5 +1,9 @@
+import json
+from typing import Optional
+
+import qrcode
 from fastapi import APIRouter, Request
-from starlette.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 
 from module.database_table.user_model import UserModel
 from module.global_dict import Global
@@ -30,6 +34,8 @@ class UserController(APIRouter):
                            methods=['GET'], name='检查用户名是否未注册并可用')
         self.add_api_route(response_model=HttpResult, path='/info', endpoint=self.get_user_info,
                            methods=['GET'], name='获取用户信息')
+        self.add_api_route(response_model=HttpResult, path='/collection_qrcode', endpoint=self.get_collection_qrcode,
+                           methods=['GET'], name='生成收款码')
 
     async def login(self, lrm: LoginRequestModel) -> JSONResponse:
         """登录，返回JWT"""
@@ -61,3 +67,16 @@ class UserController(APIRouter):
         user: UserModel = req.state.user
         self.log.info(f'get user info: {user}')
         return HttpResult.success(UserModel.get_user_information(user.username))
+
+    async def get_collection_qrcode(self, req: Request, amount: Optional[float] = None) -> FileResponse:
+        """获取收款二维码
+
+        其实这个码也可以用来作为付款码，只是取决于发起方的意愿和权限
+        """
+        user: UserModel = req.state.user
+        self.log.info(f'get collection qrcode: {user}')
+        qrcode.make(json.dumps({
+            'username': user.username,
+            'amount': amount
+        }), error_correction=qrcode.constants.ERROR_CORRECT_H).save(f'{user.username}.png')
+        return FileResponse(f'{user.username}.png')

@@ -74,6 +74,10 @@ python ./main.py --debug
 - [x] Username Available 用户名是否可用
 - [x] User Info 用户信息
 
+- [x] Account Balance 账户余额
+- [x] Account Transaction List 账户交易记录列表
+- [x] Account Transaction Detail 账户交易记录详情
+
 ## Development 开发相关
 
 - OS 操作系统：[Windows 10 19044.1586](https://www.microsoft.com/zh-cn/windows)
@@ -99,6 +103,8 @@ python ./main.py --debug
 - [PyMySQL 1.0.2](https://pymysql.readthedocs.io/) MySQL客户端
 - [python-jose 3.3.0](https://python-jose.readthedocs.io/en/latest/) JWT工具
 - [cryptography 38.0.1](https://cryptography.io/en/latest/) 加密工具
+- [Pillow 9.2.0](https://python-pillow.org/) 图像处理
+- [qrcode 7.3.1](https://github.com/lincolnloop/python-qrcode) 二维码生成
 
 ### Code Lint 代码检查
 
