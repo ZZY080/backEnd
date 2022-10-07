@@ -57,24 +57,23 @@ class HttpServer(FastAPI, metaclass=SingletonType):
         self.add_exception_handler(RequestValidationError, handler=self.exception_handler_ex)
 
         self.router.add_api_route('/', self.route_root, methods=['GET'], include_in_schema=False)
-        self.router.add_api_route('/', self.route_root, methods=['POST'], include_in_schema=False)
         self.router.include_router(UserController(), tags=['User'])
         self.router.include_router(AccountController(), tags=['Account'])
 
         self.no_token_path = {
-            # TODO: 加上方法判断
-            self.docs_url, self.openapi_url, '/docs/oauth2-redirect',  # 文档
-            '/',  # 根路径
-            '/user/login',  # 登录
-            '/user/username-available',  # 用户名验证
-            '/user/register',  # 注册
-            '/account/balance',  # 查询余额
+            (self.docs_url, 'GET'),  # swagger
+            (self.openapi_url, 'GET'),  # openapi
+            ('/docs/oauth2-redirect', 'GET'),  # swagger oauth2
+            ('/', 'GET'),  # 根路径
+            ('/user/login', 'POST'),  # 登录
+            ('/user/username-available', 'GET'),  # 用户名验证
+            ('/user/register', 'POST'),  # 注册
+            ('/account/balance', 'PUT'),  # 修改余额
         }  # 不需要token的路径
 
     @staticmethod
     async def exception_handler_ex(_: Request, exc: Union[HTTPException, RequestValidationError]) -> JSONResponse:
         """异常处理"""
-        headers = getattr(exc, 'headers', None)
         if isinstance(exc, HTTPException):
             if exc.status_code == 404:
                 content = HttpResult.not_found(exc.detail)
@@ -99,23 +98,20 @@ class HttpServer(FastAPI, metaclass=SingletonType):
 
         headers = request.headers
         token = headers.get('Authorization', '').replace('Bearer ', '')
+
         try:
             token = JWTManager.decode_jwt(token)
-        except (JWTError, ExpiredSignatureError, JWTClaimsError):
-            if request.url.path in self.no_token_path:
-                response = await call_next(request)
-            else:
-                response = HttpResult.no_auth('token无效')
-        else:
             username = token.get('username')
-            if UserModel.is_username_exist(username):
-                request.state.user = UserModel.get_user_by_name(username)
-                response = await call_next(request)
-            else:
-                if request.url.path in self.no_token_path:
-                    response = await call_next(request)
-                else:
-                    response = HttpResult.no_auth('token无效')
+            user = UserModel.get_user_by_name(username)
+        except (JWTError, ExpiredSignatureError, JWTClaimsError):
+            user = None
+        request.state.user = user
+
+        if not user and (request.url.path, request.method) not in self.no_token_path:
+            response = HttpResult.no_auth('token无效')
+        else:
+            response = await call_next(request)
+
         process_time = time.time() - start_time
         response.headers['X-Process-Time'] = str(process_time)
         self.log.debug(f'{client} <- {response.status_code} ProcessTime: {process_time:.3f}s')

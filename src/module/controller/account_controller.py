@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Body
+from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 
 from module.database_table.user_model import UserModel
@@ -63,4 +63,5 @@ class AccountController(APIRouter):
             return HttpResult.bad_request('用户不存在')
         user.balance = amount
         user.save(update=True)
+        self.log.warning(f'change balance: {user.username} {amount}')
         return HttpResult.success()
