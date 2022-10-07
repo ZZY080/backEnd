@@ -79,8 +79,8 @@ class HttpServer(FastAPI, metaclass=SingletonType):
             if exc.status_code == 404:
                 content = HttpResult.not_found(exc.detail)
             else:
-                content = HttpResult.error(exc.detail)
-            return JSONResponse(content=content, status_code=exc.status_code, headers=headers)
+                content = HttpResult.error(exc.detail, code=exc.status_code)
+            return content
         return HttpResult.bad_request()
 
     async def server_startup(self) -> None:
