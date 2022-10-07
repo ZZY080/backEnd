@@ -1,15 +1,16 @@
 from datetime import datetime
 from typing import Union
 
-from peewee import CharField, DateTimeField
+from peewee import CharField, DateTimeField, DecimalField
 
 from module.database_table.base_table import BaseTable
 
 
 class UserModel(BaseTable):
-    username: str = CharField(primary_key=True, unique=True)
-    password: str = CharField()
-    nickname: str = CharField(null=True)
+    username: str = CharField(primary_key=True, unique=True)  # 用户名
+    password: str = CharField()  # 密码
+    nickname: str = CharField(null=True)  # 昵称
+    balance: float = DecimalField(max_digits=40, decimal_places=2, default=0.0)  # 余额
 
     created_at: datetime = DateTimeField(default=datetime.now, null=True)
     updated_at: datetime = DateTimeField(default=datetime.now, null=True)

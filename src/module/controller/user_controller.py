@@ -22,14 +22,14 @@ class UserController(APIRouter):
             self.log.set_level(LogLevel.DEBUG)
         self.log.debug(f'{self.__class__.__name__} Initializing...')
 
-        self.add_api_route(response_model=HttpResult, path='/login', endpoint=self.login, methods=['POST'],
-                           tags=['User'], name='登录')
-        self.add_api_route(response_model=HttpResult, path='/register', endpoint=self.register, methods=['POST'],
-                           tags=['User'], name='注册')
-        self.add_api_route(response_model=HttpResult, path='/username-valid', endpoint=self.is_username_valid, methods=['GET'],
-                           tags=['User'], name='检查用户名是否未注册并可用')
-        self.add_api_route(response_model=HttpResult, path='/info', endpoint=self.get_user_info, methods=['GET'],
-                           tags=['User'], name='获取用户信息')
+        self.add_api_route(response_model=HttpResult, path='/login', endpoint=self.login,
+                           methods=['POST'], name='登录')
+        self.add_api_route(response_model=HttpResult, path='/register', endpoint=self.register,
+                           methods=['POST'], name='注册')
+        self.add_api_route(response_model=HttpResult, path='/username-available', endpoint=self.is_username_available,
+                           methods=['GET'], name='检查用户名是否未注册并可用')
+        self.add_api_route(response_model=HttpResult, path='/info', endpoint=self.get_user_info,
+                           methods=['GET'], name='获取用户信息')
 
     async def login(self, lrm: LoginRequestModel) -> JSONResponse:
         """登录，返回JWT"""
@@ -51,7 +51,7 @@ class UserController(APIRouter):
         self.log.debug(f'new register user: {new_user}')
         return HttpResult.success() if new_user.save() else HttpResult.error()
 
-    async def is_username_valid(self, cuv: CheckUsernameValidModel) -> JSONResponse:
+    async def is_username_available(self, cuv: CheckUsernameValidModel) -> JSONResponse:
         """检查用户名是否合法"""
         return HttpResult.success(not UserModel.is_username_exist(cuv.username))
 

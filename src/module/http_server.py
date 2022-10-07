@@ -11,6 +11,7 @@ from starlette.exceptions import HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from module.constants import APP_NAME
+from module.controller.account_controller import AccountController
 from module.controller.user_controller import UserController
 from module.database_table.user_model import UserModel
 from module.global_dict import Global
@@ -29,7 +30,8 @@ class HttpServer(FastAPI, metaclass=SingletonType):
             redoc_url=None,  # 关闭redoc文档
             title=APP_NAME,  # 文档标题
             openapi_tags=[
-                {"name": "User", "description": "用户接口"},
+                {'name': 'User', 'description': '用户操作'},
+                {'name': 'Account', 'description': '账户管理'},
             ]
         )
         self.log = LoggerEx(self.__class__.__name__)
@@ -56,7 +58,8 @@ class HttpServer(FastAPI, metaclass=SingletonType):
 
         self.router.add_api_route('/', self.route_root, methods=['GET'], include_in_schema=False)
         self.router.add_api_route('/', self.route_root, methods=['POST'], include_in_schema=False)
-        self.router.include_router(UserController())
+        self.router.include_router(UserController(), tags=['User'])
+        self.router.include_router(AccountController(), tags=['Account'])
 
         self.no_token_path = {
             self.docs_url, self.openapi_url, '/docs/oauth2-redirect',  # 文档

@@ -68,8 +68,11 @@ python ./main.py --debug
 - [x] Auto Deploy 自动部署
 - [x] Code Lint 代码检查
 - [x] CORS Support 跨域支持
+
 - [x] User Register 用户注册
 - [x] User Login 用户登录
+- [x] Username Available 用户名是否可用
+- [x] User Info 用户信息
 
 ## Development 开发相关
 
