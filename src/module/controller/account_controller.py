@@ -45,8 +45,8 @@ class AccountController(APIRouter):
         target_user = UserModel.get_user_by_name(tm.target_username)
         if target_user is None:
             return HttpResult.bad_request('目标用户不存在')
-        user.balance -= tm.amount
-        target_user.balance += tm.amount
+        user.balance = float(user.balance) - tm.amount
+        target_user.balance = float(target_user.balance) + tm.amount
         user.save(update=True)
         target_user.save(update=True)
         self.log.info(f'transfer: {user.username} -> {target_user.username} {tm.amount}')
@@ -61,6 +61,6 @@ class AccountController(APIRouter):
         user = UserModel.get_user_by_name(username)
         if user is None:
             return HttpResult.bad_request('用户不存在')
-        user.balance += amount
+        user.balance = amount
         user.save(update=True)
         return HttpResult.success()

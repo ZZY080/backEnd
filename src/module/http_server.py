@@ -62,6 +62,7 @@ class HttpServer(FastAPI, metaclass=SingletonType):
         self.router.include_router(AccountController(), tags=['Account'])
 
         self.no_token_path = {
+            # TODO: 加上方法判断
             self.docs_url, self.openapi_url, '/docs/oauth2-redirect',  # 文档
             '/',  # 根路径
             '/user/login',  # 登录
@@ -95,26 +96,26 @@ class HttpServer(FastAPI, metaclass=SingletonType):
         client = f'{request.client.host}:{request.client.port}'
         self.log.debug(f'{client} -> {request.method:.4s} {request.url.path} {request.query_params}')
         start_time = time.time()
-        if request.url.path in self.no_token_path:
-            response = await call_next(request)
-        else:
-            headers = request.headers
-            token = headers.get('Authorization')
-            if token is None:
-                response = HttpResult.no_auth('token为空')
+
+        headers = request.headers
+        token = headers.get('Authorization', '').replace('Bearer ', '')
+        try:
+            token = JWTManager.decode_jwt(token)
+        except (JWTError, ExpiredSignatureError, JWTClaimsError):
+            if request.url.path in self.no_token_path:
+                response = await call_next(request)
             else:
-                token = token.replace('Bearer ', '')
-                try:
-                    token = JWTManager.decode_jwt(token)
-                except (JWTError, ExpiredSignatureError, JWTClaimsError):
-                    response = HttpResult.no_auth('token无效')
+                response = HttpResult.no_auth('token无效')
+        else:
+            username = token.get('username')
+            if UserModel.is_username_exist(username):
+                request.state.user = UserModel.get_user_by_name(username)
+                response = await call_next(request)
+            else:
+                if request.url.path in self.no_token_path:
+                    response = await call_next(request)
                 else:
-                    username = token.get('username')
-                    if UserModel.is_username_exist(username):
-                        request.state.user = UserModel.get_user_by_name(username)
-                        response = await call_next(request)
-                    else:
-                        response = HttpResult.no_auth('token无效')
+                    response = HttpResult.no_auth('token无效')
         process_time = time.time() - start_time
         response.headers['X-Process-Time'] = str(process_time)
         self.log.debug(f'{client} <- {response.status_code} ProcessTime: {process_time:.3f}s')
