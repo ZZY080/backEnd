@@ -103,13 +103,14 @@ class HttpServer(FastAPI, metaclass=SingletonType):
                 try:
                     token = JWTManager.decode_jwt(token)
                 except (JWTError, ExpiredSignatureError, JWTClaimsError):
-                    return HttpResult.no_auth('token无效')
-                username = token.get('username')
-                if UserModel.is_username_exist(username):
-                    request.state.user = UserModel.get_user_by_name(username)
-                    response = await call_next(request)
-                else:
                     response = HttpResult.no_auth('token无效')
+                else:
+                    username = token.get('username')
+                    if UserModel.is_username_exist(username):
+                        request.state.user = UserModel.get_user_by_name(username)
+                        response = await call_next(request)
+                    else:
+                        response = HttpResult.no_auth('token无效')
         process_time = time.time() - start_time
         response.headers['X-Process-Time'] = str(process_time)
         self.log.debug(f'{client} <- {response.status_code} ProcessTime: {process_time:.3f}s')
