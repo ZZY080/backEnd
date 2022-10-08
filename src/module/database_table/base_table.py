@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Union
+from typing import Optional, Union
 
 from peewee import DateTimeField, Model
 
@@ -13,3 +13,7 @@ class BaseTable(Model):
         if update:
             self.updated_at = datetime.now()
         return super().save(not update)
+
+    @classmethod
+    def get_by_id(cls, pk) -> Optional['BaseTable']:
+        return cls.get_or_none(cls._meta.primary_key == pk)

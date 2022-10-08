@@ -3,7 +3,7 @@ from typing import Optional
 
 import qrcode
 from fastapi import APIRouter, Request
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from qrcode.image.pil import PilImage
 
 from module.database_table.file_model import FileModel
@@ -15,7 +15,7 @@ from module.logger_ex import LoggerEx, LogLevel
 from module.model.check_username_valid_model import CheckUsernameValidModel
 from module.model.login_request_model import LoginRequestModel
 from module.model.register_request_model import RegisterRequestModel
-from module.utility import hmac_sha1, checksum, pil_image_to_bytes
+from module.utility import checksum, hmac_sha1, pil_image_to_bytes
 
 
 class UserController(APIRouter):
@@ -88,13 +88,18 @@ class UserController(APIRouter):
         image_bytes = pil_image_to_bytes(image)
         _hash = checksum(image_bytes)
         name = f'{user.username}_collection_qrcode'
-        file = FileModel(
-            name=name,
-            type='png',
-            size=len(image_bytes),
-            hash=_hash,
-        )
-        file.save()
+        if file := FileModel.get_by_hash(_hash):
+            file.name = name
+            file.type = 'png'
+            file.save(True)
+        else:
+            file = FileModel(
+                name=name,
+                type='png',
+                size=len(image_bytes),
+                hash=_hash,
+            )
+            file.save()
         image.save(Global().data_dir / file.id)
         return HttpResult.success(file.id)
 
@@ -102,7 +107,7 @@ class UserController(APIRouter):
         """获取图片"""
         user: UserModel = req.state.user
         self.log.info(f'get image: {user}')
-        if not (file := FileModel.get_file_by_id(id)):
+        if not (file := FileModel.get_by_id(id)):
             return HttpResult.not_found()
         return FileResponse(
             path=Global().data_dir / file.id,

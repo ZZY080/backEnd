@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from peewee import CharField, IntegerField, BooleanField
+from peewee import BooleanField, CharField, IntegerField
 
 from module.database_table.base_table import BaseTable
 
@@ -20,11 +20,11 @@ class FileModel(BaseTable):
         super().__init__(*args, **kwargs)
         if not self.id:
             _id = uuid4().hex
-            while self.get_file_by_id(_id):
+            while self.get_by_id(_id):
                 _id = uuid4().hex
             self.id = _id
 
     @classmethod
-    def get_file_by_id(cls, file_id: str) -> 'FileModel':
-        """通过文件ID获取文件"""
-        return cls.get_or_none(cls.id == file_id)
+    def get_by_hash(cls, file_hash: str) -> 'FileModel':
+        """通过文件哈希获取文件"""
+        return cls.get_or_none(cls.hash == file_hash)
