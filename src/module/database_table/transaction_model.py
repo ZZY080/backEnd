@@ -10,6 +10,7 @@ class TransactionModel(BaseTable):
     payer: str = CharField()  # 付款人
     payee: str = CharField()  # 收款人
     amount: float = DecimalField(max_digits=40, decimal_places=2, default=0.0)  # 交易金额
+    remark: str = CharField(null=True)  # 备注
 
     class Meta:
         table_name = 'transaction'

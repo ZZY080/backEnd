@@ -51,7 +51,7 @@ class AccountController(APIRouter):
         if target_user is None:
             return HttpResult.bad_request('目标用户不存在')
 
-        t = TransactionModel(payer=user.username, payee=target_user.username, amount=tm.amount)
+        t = TransactionModel(payer=user.username, payee=target_user.username, amount=tm.amount, remark=tm.remark)
         t.save()
 
         user.balance = float(user.balance) - tm.amount
@@ -86,6 +86,7 @@ class AccountController(APIRouter):
             'payer': transaction.payer,
             'payee': transaction.payee,
             'amount': float(transaction.amount),
+            'remark': transaction.remark,
             'create_time': str(transaction.created_at),
         })
 
@@ -105,6 +106,7 @@ class AccountController(APIRouter):
                 'payer': i.payer,
                 'payee': i.payee,
                 'amount': float(i.amount),
+                'remark': i.remark,
                 'create_time': str(i.created_at),
             } for i in ls]
         })
