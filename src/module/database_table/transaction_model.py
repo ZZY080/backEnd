@@ -16,8 +16,11 @@ class TransactionModel(BaseTable):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        while (not self.id) and self.get_transaction_by_id(self.id):
-            self.id = uuid4().hex
+        if not self.id:
+            _id = uuid4().hex
+            while self.get_transaction_by_id(_id):
+                _id = uuid4().hex
+            self.id = _id
 
     @classmethod
     def get_transaction_by_id(cls, transaction_id: str) -> 'TransactionModel':

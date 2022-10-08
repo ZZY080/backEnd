@@ -46,11 +46,11 @@ class Global(metaclass=SingletonType):
     ############
 
     root_dir = Path('.')  # 根目录
-    download_dir = Path(root_dir, 'downloads')  # 下载目录
+    data_dir = Path(root_dir, 'data')  # 数据目录
 
     def __init__(self):
         # 创建目录
-        for dir_ in [self.download_dir]:
+        for dir_ in [self.data_dir]:
             dir_.mkdir(parents=True, exist_ok=True)
 
     @property

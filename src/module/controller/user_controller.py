@@ -4,7 +4,9 @@ from typing import Optional
 import qrcode
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, FileResponse
+from qrcode.image.pil import PilImage
 
+from module.database_table.file_model import FileModel
 from module.database_table.user_model import UserModel
 from module.global_dict import Global
 from module.http_result import HttpResult
@@ -13,7 +15,7 @@ from module.logger_ex import LoggerEx, LogLevel
 from module.model.check_username_valid_model import CheckUsernameValidModel
 from module.model.login_request_model import LoginRequestModel
 from module.model.register_request_model import RegisterRequestModel
-from module.utility import hmac_sha1
+from module.utility import hmac_sha1, checksum, pil_image_to_bytes
 
 
 class UserController(APIRouter):
@@ -36,6 +38,8 @@ class UserController(APIRouter):
                            methods=['GET'], name='获取用户信息')
         self.add_api_route(response_model=HttpResult, path='/collection_qrcode', endpoint=self.get_collection_qrcode,
                            methods=['GET'], name='生成收款码')
+        self.add_api_route(response_model=HttpResult, path='/image', endpoint=self.get_image,
+                           methods=['GET'], name='获取图片字节')
 
     async def login(self, lrm: LoginRequestModel) -> JSONResponse:
         """登录，返回JWT"""
@@ -68,15 +72,40 @@ class UserController(APIRouter):
         self.log.info(f'get user info: {user}')
         return HttpResult.success(UserModel.get_user_information(user.username))
 
-    async def get_collection_qrcode(self, req: Request, amount: Optional[float] = None) -> FileResponse:
-        """获取收款二维码
+    async def get_collection_qrcode(self, req: Request, amount: Optional[float] = None) -> JSONResponse:
+        """生成收款二维码
+
+        返回图片id，使用 /user/image?id=xxx获取图片
 
         其实这个码也可以用来作为付款码，只是取决于发起方的意愿和权限
         """
         user: UserModel = req.state.user
-        self.log.info(f'get collection qrcode: {user}')
-        qrcode.make(json.dumps({
+        self.log.info(f'create collection qrcode: {user}')
+        image: PilImage = qrcode.make(json.dumps({
             'username': user.username,
             'amount': amount
-        }), error_correction=qrcode.constants.ERROR_CORRECT_H).save(f'{user.username}.png')
-        return FileResponse(f'{user.username}.png')
+        }), error_correction=qrcode.constants.ERROR_CORRECT_H)
+        image_bytes = pil_image_to_bytes(image)
+        _hash = checksum(image_bytes)
+        name = f'{user.username}_collection_qrcode'
+        file = FileModel(
+            name=name,
+            type='png',
+            size=len(image_bytes),
+            hash=_hash,
+        )
+        file.save()
+        image.save(Global().data_dir / file.id)
+        return HttpResult.success(file.id)
+
+    async def get_image(self, req: Request, id: str) -> FileResponse | JSONResponse:  # noqa
+        """获取图片"""
+        user: UserModel = req.state.user
+        self.log.info(f'get image: {user}')
+        if not (file := FileModel.get_file_by_id(id)):
+            return HttpResult.not_found()
+        return FileResponse(
+            path=Global().data_dir / file.id,
+            filename=f'{file.name}.{file.type}',
+            media_type=f'image/{file.type}',
+        )

@@ -3,6 +3,7 @@ import contextlib
 import ctypes
 import hashlib
 import hmac
+import io
 import os
 import platform
 import socket
@@ -13,6 +14,7 @@ from typing import Any, Generator, Union
 
 import distro
 import psutil
+from PIL.Image import Image
 
 
 def is_port_in_use(_port: int, _host: str = '127.0.0.1') -> bool:
@@ -153,6 +155,13 @@ def deep_iter(data: Any, depth=inf, current_depth=1) -> Generator:
 def hmac_sha1(key: str, data: str) -> str:
     """计算HMAC-SHA1"""
     return hmac.new(key.encode(), data.encode(), hashlib.sha1).hexdigest()
+
+
+def pil_image_to_bytes(image: Image, _format: str = 'PNG') -> bytes:
+    """PIL Image转bytes"""
+    with io.BytesIO() as output:
+        image.save(output, format=_format)
+        return output.getvalue()
 
 
 if __name__ == '__main__':

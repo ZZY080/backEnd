@@ -3,6 +3,7 @@ from typing import List, Optional, Type
 from peewee import Model, MySQLDatabase
 from playhouse.kv import KeyValue
 
+from module.database_table.file_model import FileModel
 from module.database_table.transaction_model import TransactionModel
 from module.database_table.user_model import UserModel
 from module.global_dict import Global
@@ -27,7 +28,7 @@ class Database(MySQLDatabase, metaclass=SingletonType):
         if Global().debug_mode:
             self.log.set_level(LogLevel.DEBUG)
         self.log.debug(f'{self.__class__.__name__} initializing...')
-        self.tables: List[Type[Model]] = [UserModel, TransactionModel]  # 表名
+        self.tables: List[Type[Model]] = [UserModel, TransactionModel, FileModel]  # 表名
         self.bind(self.tables)
         self.KV: Optional[KeyValue] = None  # 键值对表
 
