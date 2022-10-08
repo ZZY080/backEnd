@@ -73,8 +73,10 @@ python ./main.py --debug
 - [x] User Login 用户登录
 - [x] Username Available 用户名是否可用
 - [x] User Info 用户信息
+- [x] Collection Qrcode 收款二维码
 
 - [x] Account Balance 账户余额
+- [x] Create Transaction 创建转账
 - [x] Account Transaction List 账户交易记录列表
 - [x] Account Transaction Detail 账户交易记录详情
 
